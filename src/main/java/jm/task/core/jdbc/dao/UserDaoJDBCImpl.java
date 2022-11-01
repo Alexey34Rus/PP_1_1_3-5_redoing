@@ -49,22 +49,55 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 
+//    public void removeUserById(long id) {
+//        try (Statement statement = connection.createStatement()) {
+//            String sql = "DELETE FROM pre_project_113.users WHERE id";
+//            statement.executeUpdate(sql);
+//            System.out.println("User удален");
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     public void removeUserById(long id) {
-        try (Statement statement = connection.createStatement()) {
-            String sql = "DELETE FROM pre_project_113.users WHERE id";
-            statement.executeUpdate(sql);
+        String sql = "DELETE FROM pre_project_113.users WHERE id";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            //String sql = "DELETE FROM pre_project_113.users WHERE id";
+            preparedStatement.executeUpdate(sql);
             System.out.println("User удален");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+//    public List<User> getAllUsers() {
+//        List<User> allUser = new ArrayList<>();
+//        String sql = "SELECT id, name, lastName, age FROM pre_project_113.users";
+//
+//        try (Statement statement = connection.createStatement()) {
+//            ResultSet resultSet = statement.executeQuery(sql);
+//
+//            while (resultSet.next()) {
+//                User user = new User();
+//                user.setId(resultSet.getLong("id"));
+//                user.setName(resultSet.getString("name"));
+//                user.setLastName(resultSet.getString("lastName"));
+//                user.setAge(resultSet.getByte("age"));
+//                allUser.add(user);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return allUser;
+//    }
+
     public List<User> getAllUsers() {
         List<User> allUser = new ArrayList<>();
         String sql = "SELECT id, name, lastName, age FROM pre_project_113.users";
 
-        try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery(sql);
 
             while (resultSet.next()) {
                 User user = new User();
