@@ -1,39 +1,64 @@
 package jm.task.core.jdbc.util;
 
+//import jm.task.core.jdbc.model.User;
+//import org.hibernate.HibernateException;
+//import org.hibernate.SessionFactory;
+//import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+//import org.hibernate.cfg.Configuration;
+//import org.hibernate.service.ServiceRegistry;
+
+import java.util.Properties;
+
 import jm.task.core.jdbc.model.User;
-import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 
+//import net.javaguides.hibernate.entity.User;
+
 public class Util {
-    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String HOST = "jdbc:mysql://localhost:3306/pre_project_113?useSSL=false&allowMultiQueries=true&serverTimezone=UTC";
-    private static final String LOGIN = "root";
-    private static final String PASSWORD = "root";
-    private static SessionFactory sessionFactory = null;
+//    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+//    private static final String HOST = "jdbc:mysql://localhost:3306/pre_project_113?useSSL=false&allowMultiQueries=true&serverTimezone=UTC";
+//    private static final String LOGIN = "root";
+//    private static final String PASSWORD = "root";
+//    private static SessionFactory sessionFactory = null;
 
-    public static SessionFactory getConnection() {
+    private static SessionFactory sessionFactory;
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            try {
+                Configuration configuration = new Configuration();
 
-        try {
-            Configuration configuration = new Configuration()
-                    .setProperty("hibernate.connection.driver_class", DRIVER)
-                    .setProperty("hibernate.connection.url", HOST)
-                    .setProperty("hibernate.connection.username", LOGIN)
-                    .setProperty("hibernate.connection.password", PASSWORD)
-                    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
-                    .addAnnotatedClass(User.class)
-                    .setProperty("hibernate.c3p0.min_size","5")
-                    .setProperty("hibernate.c3p0.max_size","200")
-                    .setProperty("hibernate.c3p0.max_statements","200");
+                // Hibernate settings equivalent to hibernate.cfg.xml's properties
+                Properties settings = new Properties();
+                settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
+                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/pre_project_113?useSSL=false");
+                settings.put(Environment.USER, "root");
+                settings.put(Environment.PASS, "root");
+                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
 
-            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                    .applySettings(configuration.getProperties()).build();
-            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-        } catch (HibernateException e) {
-            e.printStackTrace();
+                settings.put(Environment.SHOW_SQL, "false"); // не ишет все инструкции SQL в консоль
+
+                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+
+                settings.put(Environment.HBM2DDL_AUTO, "create-drop");
+
+                configuration.setProperties(settings);
+
+                configuration.addAnnotatedClass(User.class);
+
+                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                        .applySettings(configuration.getProperties()).build();
+
+                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return sessionFactory;
     }
+
+
 }
